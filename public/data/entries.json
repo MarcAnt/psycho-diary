@@ -1,0 +1,64 @@
+{
+  "entries": [
+    {
+      "title": "Elegant Solutions",
+      "description": "<p>This is a description with HTML tags.</p><p>It has multiple paragraphs.</p>",
+      "id": "entry-1",
+      "date": "2023-03-01T14:30:00.000Z"
+    },
+    {
+      "title": "Innovative Designs",
+      "description": "<p>Another description with HTML.</p>",
+      "id": "entry-2",
+      "date": "2023-03-02T10:45:00.000Z"
+    },
+    {
+      "title": "Creative Ideas",
+      "description": "<p>This is a creative idea.</p><p>It involves innovative thinking.</p>",
+      "id": "entry-3",
+      "date": "2023-03-03T12:00:00.000Z"
+    },
+    {
+      "title": "Modern Technology",
+      "description": "<p>Modern tech is evolving fast.</p><p>New advancements daily.</p>",
+      "id": "entry-4",
+      "date": "2023-03-04T15:15:00.000Z"
+    },
+    {
+      "title": "Digital Solutions",
+      "description": "<p>Digital solutions for modern problems.</p>",
+      "id": "entry-5",
+      "date": "2023-03-05T09:30:00.000Z"
+    },
+    {
+      "title": "Artistic Expression",
+      "description": "<p>Artistic expression is key.</p><p>It brings joy and creativity.</p>",
+      "id": "entry-6",
+      "date": "2023-03-06T11:45:00.000Z"
+    },
+    {
+      "title": "Global Connections",
+      "description": "<p>Connecting people globally.</p><p>Breaking barriers.</p>",
+      "id": "entry-7",
+      "date": "2023-03-07T13:00:00.000Z"
+    },
+    {
+      "title": "Sustainable Practices",
+      "description": "<p>Sustainability is crucial.</p><p>For a better future.</p>",
+      "id": "entry-8",
+      "date": "2023-03-08T16:15:00.000Z"
+    },
+    {
+      "title": "Educational Resources",
+      "description": "<p>Access to education is vital.</p><p>Empowering minds.</p>",
+      "id": "entry-9",
+      "date": "2023-03-09T10:45:00.000Z"
+    },
+    {
+      "title": "Community Building",
+      "description": "<p>Building strong communities.</p><p>Together we grow.</p>",
+      "id": "entry-10",
+      "date": "2023-03-10T12:30:00.000Z"
+    }
+  ]
+}
