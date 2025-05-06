@@ -2,26 +2,28 @@ import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
 import "@mantine/tiptap/styles.css";
 import "@mantine/notifications/styles.css";
-
 import {
   ColorSchemeScript,
   MantineProvider,
   mantineHtmlProps,
 } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
-
 import { EntryStoreProvider } from "@/providers/entries-store-provider";
+import Footer from "./components/Footer";
+// import { SessionProvider } from "next-auth/react";
+// import { auth } from "@/auth";
 
 export const metadata = {
-  title: "My Mantine app",
-  description: "I have followed setup instructions carefully",
+  title: "Registro diario",
+  description: "Registro diario de problemas",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // const session = await auth();
   return (
     <>
       <html lang="en" {...mantineHtmlProps}>
@@ -31,7 +33,11 @@ export default function RootLayout({
         <body>
           <MantineProvider defaultColorScheme="auto">
             <Notifications />
+            {/* <SessionProvider session={session}> */}
             <EntryStoreProvider>{children}</EntryStoreProvider>
+            {/* </SessionProvider> */}
+
+            <Footer />
           </MantineProvider>
         </body>
       </html>

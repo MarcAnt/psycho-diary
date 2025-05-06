@@ -1,4 +1,5 @@
-import { Flex } from "@mantine/core";
+import { Center, Container } from "@mantine/core";
+import Header from "../components/Header";
 
 export default function LoginLayout({
   children,
@@ -6,8 +7,11 @@ export default function LoginLayout({
   children: React.ReactNode;
 }) {
   return (
-    <Flex h={"100vh"} justify={"center"} align={"center"}>
-      <>{children}</>
-    </Flex>
+    <>
+      <Header userType={null} />
+      <Container size="xl">
+        <Center>{children}</Center>
+      </Container>
+    </>
   );
 }

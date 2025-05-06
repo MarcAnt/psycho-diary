@@ -1,18 +1,17 @@
 "use client";
 import { RichTextEditor, Link } from "@mantine/tiptap";
-import { useEditor } from "@tiptap/react";
+import { type Editor, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text";
+import ClearControl from "./ClearControl";
 
 interface RichTextEditorProps {
   value: string;
   onChange: (value: string) => void;
-  submitted: boolean;
+  editor?: Editor | null;
 }
 
-export const Editor = ({ onChange, value, submitted }: RichTextEditorProps) => {
-  // const [editDoc, setEditDoc] = useState<JSONContent>();
-
+export const ShowEditor = ({ onChange, value }: RichTextEditorProps) => {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -21,30 +20,23 @@ export const Editor = ({ onChange, value, submitted }: RichTextEditorProps) => {
     ],
     content: value,
     onUpdate: ({ editor }) => {
-      // setEditDoc(editor.getJSON());
-
-      if (submitted) {
+      if (editor.isEmpty) {
         onChange("");
-        editor.commands.setContent("");
         return;
       }
-
       onChange(editor.getHTML());
     },
+    immediatelyRender: false,
   });
 
   return (
     <>
-      <RichTextEditor editor={editor}>
+      <RichTextEditor editor={editor} w={"100%"}>
         <RichTextEditor.Toolbar sticky stickyOffset={60}>
           <RichTextEditor.ControlsGroup>
             <RichTextEditor.Bold />
             <RichTextEditor.Italic />
             <RichTextEditor.Underline />
-            <RichTextEditor.Strikethrough />
-            <RichTextEditor.ClearFormatting />
-            <RichTextEditor.Highlight />
-            <RichTextEditor.Code />
           </RichTextEditor.ControlsGroup>
 
           <RichTextEditor.ControlsGroup>
@@ -55,30 +47,20 @@ export const Editor = ({ onChange, value, submitted }: RichTextEditorProps) => {
           </RichTextEditor.ControlsGroup>
 
           <RichTextEditor.ControlsGroup>
-            <RichTextEditor.Blockquote />
-            <RichTextEditor.Hr />
             <RichTextEditor.BulletList />
             <RichTextEditor.OrderedList />
           </RichTextEditor.ControlsGroup>
-
-          <RichTextEditor.ControlsGroup>
-            <RichTextEditor.AlignLeft />
-            <RichTextEditor.AlignCenter />
-            <RichTextEditor.AlignJustify />
-            <RichTextEditor.AlignRight />
-          </RichTextEditor.ControlsGroup>
+          <ClearControl
+            handleClear={() => {
+              editor?.commands.setContent("");
+              onChange("");
+            }}
+          />
         </RichTextEditor.Toolbar>
 
         <RichTextEditor.Content />
       </RichTextEditor>
-
-      {/* <div dangerouslySetInnerHTML={{ __html: value }}></div> */}
-      {/* <div>
-        {editDoc
-          ? generateText(editDoc, [Document, Paragraph, Text, Bold, Heading])
-          : null}
-      </div> */}
     </>
   );
 };
-export default Editor;
+export default ShowEditor;

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { FormState, SignupFormSchema } from "../lib/definition";
+import { FormState, SignupFormSchema } from "../lib/signupSchema";
 
 export async function signup(state: FormState, formData: FormData) {
   // Validate form fields
@@ -16,18 +16,18 @@ export async function signup(state: FormState, formData: FormData) {
   }
 
   // 2. Prepare data for insertion into database
-  const { user, password } = validatedFields.data;
+  const { profile, password } = validatedFields.data;
   // e.g. Hash the user's password before storing it
   // const hashedPassword = await bcrypt.hash(password, 10)
 
-  if (!user) {
+  if (!profile) {
     return {
       message: "An error occurred while creating your account.",
     };
   }
 
-  if (user && password === "psycho1") {
-    console.log({ user, password });
+  if (profile && password === "psycho1") {
+    console.log({ profile, password });
     redirect("/");
   }
 }

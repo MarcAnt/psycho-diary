@@ -1,14 +1,22 @@
 import React from "react";
 import DiaryEntries from "../components/DiaryEntries";
-import { Container } from "@mantine/core";
-import Header from "../components/Header";
+import AppInitializer from "../components/AppInitializer";
+import { authProfile } from "../utils/authProfile";
+import Link from "next/link";
+import { Anchor, Flex } from "@mantine/core";
 
-const EntriesPage = () => {
+const EntriesPage = async () => {
+  const { profile } = await authProfile();
+
   return (
-    <Container size="xl">
-      <Header />
-      <DiaryEntries />
-    </Container>
+    <AppInitializer>
+      <Flex direction={"column"} w={"100%"} mt={20}>
+        <Anchor component={Link} px={"sm"} href={"/"}>
+          Inicio
+        </Anchor>
+        <DiaryEntries profile={profile} />
+      </Flex>
+    </AppInitializer>
   );
 };
 

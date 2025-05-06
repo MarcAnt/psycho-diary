@@ -1,12 +1,14 @@
 "use client";
-import { Box, Button, Flex, Group, Text, Title } from "@mantine/core";
+import { Box, Flex, Group, Text, Title } from "@mantine/core";
 import React from "react";
 import ChangeTheme from "./ChangeTheme";
-import { useRouter } from "next/navigation";
+import Logout from "./Logout";
 
-const Header = () => {
-  const router = useRouter();
+type Props = {
+  userType: "patient" | "psychologist" | null;
+};
 
+const Header = ({ userType }: Props) => {
   return (
     <Box
       component="header"
@@ -14,20 +16,21 @@ const Header = () => {
         borderBottom: "1px solid",
         borderBottomColor: theme.colors.gray[7],
       })}
+      px={20}
     >
       <Flex mt={20} mb={20} align={"center"} justify={"space-between"}>
-        <Title order={2}>Registro diario</Title>
+        <Title order={2} fz={{ base: "lg", md: "md" }}>
+          Registro diario
+        </Title>
         <Group gap={"md"}>
-          <Text size="md">Marcos</Text>
+          {userType ? (
+            <Text size="md">
+              {userType === "patient" ? "Paciente" : "Psicólogo"}
+            </Text>
+          ) : null}
+
           <ChangeTheme />
-          <Button
-            onClick={() => {
-              router.push("/login");
-            }}
-            variant="light"
-          >
-            Salir
-          </Button>
+          {userType ? <Logout /> : null}
         </Group>
       </Flex>
     </Box>

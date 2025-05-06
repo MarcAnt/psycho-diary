@@ -1,13 +1,20 @@
-import { Flex } from "@mantine/core";
+import { Center, Container } from "@mantine/core";
+import Header from "../components/Header";
+import { authProfile } from "../utils/authProfile";
 
-export default function EntriesLayout({
+export default async function EntriesLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { profile } = await authProfile();
+
   return (
-    <Flex h={"100vh"} justify={"center"} align={"center"}>
-      <>{children}</>
-    </Flex>
+    <>
+      <Header userType={profile} />
+      <Container size="xl">
+        <Center>{children}</Center>
+      </Container>
+    </>
   );
 }

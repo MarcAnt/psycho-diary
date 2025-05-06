@@ -1,7 +1,16 @@
 "use client";
-
-import React from "react";
-import { Box, Button, Checkbox, Flex, TextInput } from "@mantine/core";
+import React, { useState } from "react";
+import {
+  Box,
+  Button,
+  Checkbox,
+  Flex,
+  Modal,
+  Paper,
+  Text,
+  TextInput,
+  useMantineTheme,
+} from "@mantine/core";
 import { DateTimePicker } from "@mantine/dates";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { Entry } from "../types";
@@ -10,29 +19,26 @@ import StarterKit from "@tiptap/starter-kit";
 import { Link, RichTextEditor } from "@mantine/tiptap";
 import TextAlign from "@tiptap/extension-text";
 import { useEntryStore } from "@/providers/entries-store-provider";
-import { BiCalendar, BiTrash } from "react-icons/bi";
+import { BiCalendar } from "react-icons/bi";
+import { createClient } from "../utils/supabase/client";
+import { BsStars } from "react-icons/bs";
+import { useDisclosure } from "@mantine/hooks";
+import ClearControl from "./Editor/ClearControl";
 
-type FormInputs = Omit<Entry, "id"> & {
+type FormInputs = Omit<Entry, "id" | "comments"> & {
   isCurrentDay: boolean;
   isSubmitted: boolean;
 };
 
-function ClearControl({ handleClear }: { handleClear: () => void }) {
-  return (
-    <RichTextEditor.Control
-      onClick={handleClear}
-      aria-label="Clear content"
-      title="Clear content"
-    >
-      <BiTrash size={16} />
-    </RichTextEditor.Control>
-  );
-}
-
 const MainForm = () => {
   const { addEntry } = useEntryStore((state) => state);
+  const [isLoading, setIsLoading] = useState(false);
+  const [generatedText, setGeneratedText] = useState("");
+  const [opened, { open, close }] = useDisclosure(false);
+  const theme = useMantineTheme();
+
   const form = useForm<FormInputs>({
-    mode: "uncontrolled",
+    mode: "controlled",
     validateInputOnChange: true,
     initialValues: {
       title: "",
@@ -61,8 +67,13 @@ const MainForm = () => {
     ],
     content: description,
     onUpdate: ({ editor }) => {
+      if (editor.isEmpty) {
+        setFieldValue("description", "");
+        return;
+      }
       setFieldValue("description", editor.getHTML());
     },
+    immediatelyRender: false,
   });
 
   watch("isCurrentDay", ({ value }) => {
@@ -71,90 +82,182 @@ const MainForm = () => {
     }
   });
 
+  const handleSubmit = async (values: FormInputs) => {
+    if (!values.title || !values.description) {
+      return;
+    }
+
+    const supabase = createClient();
+    const { error } = await supabase.from("entry").insert([
+      {
+        title: values.title,
+        description: values.description,
+        date: values.date,
+      },
+    ]);
+
+    if (error) {
+      console.error("Error inserting data:", error);
+      return;
+    }
+
+    addEntry({
+      date: !isCurrentDay ? values.date : new Date(),
+      description: values.description,
+      title: values.title,
+    });
+    setFieldValue("description", "");
+    setGeneratedText("");
+    editor?.commands.setContent("");
+    reset();
+  };
+
+  const handleCorrections = async () => {
+    setIsLoading(true);
+
+    try {
+      const response = await fetch("api/correction", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ nota: description }),
+      });
+
+      if (!response.ok) {
+        console.error("Error:", response.statusText);
+        return;
+      }
+
+      const { sugerencias } = await response.json();
+
+      if (sugerencias) {
+        setIsLoading(false);
+        setGeneratedText(sugerencias);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <Box
-      component="form"
-      onSubmit={form.onSubmit((values) => {
-        addEntry({
-          date: !isCurrentDay ? values.date : new Date(),
-          description: values.description,
-          title: values.title,
-        });
-        setFieldValue("description", "");
-        editor?.commands.setContent("");
-        reset();
-      })}
-      w={{ base: "100%", md: "70%" }}
-      h={"50%"}
-      my={20}
-      pos={"sticky"}
-      top={10}
-      left={0}
-    >
-      <Flex direction="column" gap={10}>
-        <TextInput
-          label="Título"
-          placeholder="Título"
-          key={form.key("title")}
-          {...form.getInputProps("title")}
-          mb={10}
-        />
+    <>
+      <Modal opened={opened} size={"xl"} onClose={close} title="Texto generado">
+        <Text>Puedes copiar el texto que necesites</Text>
+        <Paper shadow="xs" withBorder p="xl">
+          <Box
+            m={0}
+            p={0}
+            dangerouslySetInnerHTML={{
+              __html: generatedText,
+            }}
+          />
+        </Paper>
+      </Modal>
 
-        <RichTextEditor editor={editor}>
-          <RichTextEditor.Toolbar>
-            <RichTextEditor.ControlsGroup>
-              <RichTextEditor.Bold />
-              <RichTextEditor.Italic />
-              <RichTextEditor.Underline />
-              <RichTextEditor.Strikethrough />
-            </RichTextEditor.ControlsGroup>
-
-            <RichTextEditor.ControlsGroup>
-              <RichTextEditor.H1 />
-              <RichTextEditor.H2 />
-              <RichTextEditor.H3 />
-              <RichTextEditor.H4 />
-            </RichTextEditor.ControlsGroup>
-
-            <RichTextEditor.ControlsGroup>
-              <RichTextEditor.Blockquote />
-              <RichTextEditor.BulletList />
-              <RichTextEditor.OrderedList />
-            </RichTextEditor.ControlsGroup>
-            <ClearControl
-              handleClear={() => {
-                editor?.commands.setContent("");
-                setFieldValue("description", "");
-              }}
-            />
-          </RichTextEditor.Toolbar>
-
-          <RichTextEditor.Content />
-        </RichTextEditor>
-
-        <Flex mt={10} gap={20} direction={"column"}>
-          <Checkbox
-            key={form.key("isCurrentDay")}
-            {...form.getInputProps("isCurrentDay", { type: "checkbox" })}
-            label={"Marcar como día actual"}
+      <Box
+        component="form"
+        onSubmit={form.onSubmit(handleSubmit)}
+        w={{ base: "100%", md: "70%" }}
+        h={"50%"}
+        my={20}
+        pos={{ lg: "sticky" }}
+        top={10}
+        left={0}
+        p={10}
+        style={{
+          backgroundColor: "rgba(25, 113, 194, 0.06)",
+          borderRadius: theme.radius.md,
+        }}
+      >
+        <Flex direction="column" gap={10}>
+          <TextInput
+            label="Título"
+            placeholder="Título"
+            key={form.key("title")}
+            {...form.getInputProps("title")}
+            mb={10}
           />
 
-          <DateTimePicker
-            disabled={isCurrentDay}
-            label="Fecha y hora específica"
-            placeholder="Fecha y hora"
-            rightSectionPointerEvents={"none"}
-            rightSection={<BiCalendar />}
-            key={form.key("date")}
-            {...form.getInputProps("date")}
-          />
+          <RichTextEditor editor={editor}>
+            <RichTextEditor.Toolbar>
+              <RichTextEditor.ControlsGroup>
+                <RichTextEditor.Bold />
+                <RichTextEditor.Italic />
+                <RichTextEditor.Underline />
+                <RichTextEditor.Strikethrough />
+              </RichTextEditor.ControlsGroup>
 
-          <Button disabled={!form.isValid()} type="submit" variant="light">
-            Guardar
+              <RichTextEditor.ControlsGroup>
+                <RichTextEditor.H1 />
+                <RichTextEditor.H2 />
+                <RichTextEditor.H3 />
+                <RichTextEditor.H4 />
+              </RichTextEditor.ControlsGroup>
+
+              <RichTextEditor.ControlsGroup>
+                <RichTextEditor.BulletList />
+                <RichTextEditor.OrderedList />
+              </RichTextEditor.ControlsGroup>
+              <ClearControl
+                handleClear={() => {
+                  editor?.commands.setContent("");
+                  setFieldValue("description", "");
+                }}
+              />
+            </RichTextEditor.Toolbar>
+
+            <RichTextEditor.Content />
+          </RichTextEditor>
+
+          <Button
+            rightSection={<BsStars color={"yellow"} />}
+            disabled={description === ""}
+            type="button"
+            variant="gradient"
+            onClick={handleCorrections}
+            loading={isLoading}
+            loaderProps={{ type: "dots" }}
+            fullWidth
+          >
+            Mejorar registro
           </Button>
+          {generatedText ? (
+            <Button
+              fullWidth
+              disabled={!description}
+              type="button"
+              onClick={open}
+            >
+              Abrir
+            </Button>
+          ) : null}
+
+          <Flex mt={10} gap={20} direction={"column"}>
+            <Checkbox
+              key={form.key("isCurrentDay")}
+              {...form.getInputProps("isCurrentDay", { type: "checkbox" })}
+              label={"Marcar como día actual"}
+            />
+
+            <DateTimePicker
+              disabled={isCurrentDay}
+              label="Fecha y hora específica"
+              placeholder="Fecha y hora"
+              rightSectionPointerEvents={"none"}
+              rightSection={<BiCalendar />}
+              key={form.key("date")}
+              {...form.getInputProps("date")}
+            />
+
+            <Button fullWidth disabled={!form.isValid()} type="submit">
+              Guardar
+            </Button>
+          </Flex>
         </Flex>
-      </Flex>
-    </Box>
+      </Box>
+    </>
   );
 };
 
