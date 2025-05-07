@@ -104,7 +104,6 @@ const DiaryEntry = ({
                 setComment(value);
               }}
               value={comment}
-              // editor={editor}
             />
 
             <Button
@@ -137,7 +136,12 @@ const DiaryEntry = ({
       >
         <Spoiler maxHeight={120} showLabel="Mostrar más" hideLabel="Ocultar">
           <Stack gap={0}>
-            <Flex align={"center"} columnGap={10} mb={5}>
+            <Flex
+              align={"center"}
+              justify={"space-between"}
+              columnGap={10}
+              mb={5}
+            >
               {profile === "patient" && (
                 <>
                   {comments?.length ? (
