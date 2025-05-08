@@ -14,7 +14,9 @@ interface RichTextEditorProps {
 export const ShowEditor = ({ onChange, value }: RichTextEditorProps) => {
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        text: false,
+      }),
       Link,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
     ],

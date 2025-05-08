@@ -138,7 +138,7 @@ const DiaryEntry = ({
           <Stack gap={0}>
             <Flex
               align={"center"}
-              justify={"space-between"}
+              justify={comments?.length ? "space-between" : "flex-end"}
               columnGap={10}
               mb={5}
             >
