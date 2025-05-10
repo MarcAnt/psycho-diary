@@ -1,4 +1,4 @@
-import { Container, Divider, Flex } from "@mantine/core";
+import { Center, Container, Flex, Title } from "@mantine/core";
 import MainForm from "./components/MainForm";
 import Header from "./components/Header";
 import DiaryEntries from "./components/DiaryEntries";
@@ -16,23 +16,44 @@ export default async function Home() {
   return (
     <Suspense>
       <Header userType={profile} />
-      <Container size="xl">
-        <AppInitializer>
-          {profile === "patient" ? (
-            <Flex
-              my={"sm"}
-              pos={"relative"}
-              direction={{ base: "column", md: "row" }}
-            >
-              <MainForm />
-              <Divider my="md" />
-              <DiaryEntries profile={profile} />
-            </Flex>
-          ) : (
-            <DiaryEntries profile={profile} />
-          )}
-        </AppInitializer>
-      </Container>
+      <AppInitializer>
+        <Container size="xl">
+          <Center>
+            {profile === "patient" ? (
+              <Flex
+                my={"sm"}
+                pos={"relative"}
+                direction={"column"}
+                align={"center"}
+                justify={"center"}
+                w={"100%"}
+              >
+                <Title order={3} my={"md"} ta="center">
+                  ¡Hola! Bienvenido de nuevo. ¿Qué notas tienes para hoy?
+                </Title>
+                <MainForm />
+                {/* <Divider my="md" /> */}
+                <DiaryEntries profile={profile} />
+              </Flex>
+            ) : (
+              <Flex
+                my={"sm"}
+                pos={"relative"}
+                direction={"column"}
+                align={"center"}
+                justify={"center"}
+                w={"100%"}
+              >
+                <Title order={3} my={"md"} ta="center">
+                  ¡Hola! Bienvenido de nuevo. Estas son las notas de tu
+                  paciente.
+                </Title>
+                <DiaryEntries profile={profile} />
+              </Flex>
+            )}
+          </Center>
+        </Container>
+      </AppInitializer>
     </Suspense>
   );
 }

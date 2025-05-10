@@ -85,6 +85,7 @@ const DiaryEntry = ({
             <TextNode>Comentario - {title}</TextNode>
           )
         }
+        radius={"md"}
         centered
       >
         {comments?.length ? (

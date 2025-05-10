@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import DiaryEntry from "./DiaryEntry";
 import {
   Anchor,
+  Divider,
   Flex,
   Group,
   Pagination,
@@ -50,7 +51,14 @@ const DiaryEntries = ({ profile }: Props) => {
   };
 
   return (
-    <Flex direction={"column"} w={"100%"} px={"sm"} align={"center"}>
+    <Flex
+      direction={"column"}
+      w={{ base: "100%", sm: "80%", lg: "60%" }}
+      mx={"auto"}
+      px={"sm"}
+      justify={"center"}
+      align={"center"}
+    >
       <Flex justify={"space-between"} align={"center"} w={"100%"}>
         {!isEntriesPage && totalEntries > 5 ? (
           <Anchor component={Link} w={"auto"} href="/entries">
@@ -64,6 +72,9 @@ const DiaryEntries = ({ profile }: Props) => {
         }}
         profile={profile}
       />
+
+      <Divider my="md" />
+
       {data.length ? (
         <>
           {isEntriesPage ? (

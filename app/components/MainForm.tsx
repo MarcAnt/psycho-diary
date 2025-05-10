@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Checkbox,
+  Drawer,
   Flex,
   Modal,
   Paper,
@@ -35,6 +36,8 @@ const MainForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [generatedText, setGeneratedText] = useState("");
   const [opened, { open, close }] = useDisclosure(false);
+  const [openedDrawer, { open: openDrawer, close: closeDrawer }] =
+    useDisclosure(false);
   const theme = useMantineTheme();
 
   const form = useForm<FormInputs>({
@@ -145,7 +148,13 @@ const MainForm = () => {
 
   return (
     <>
-      <Modal opened={opened} size={"xl"} onClose={close} title="Texto generado">
+      <Modal
+        opened={opened}
+        size={"xl"}
+        onClose={close}
+        radius={"md"}
+        title="Texto generado"
+      >
         <Text>Puedes copiar el texto que necesites</Text>
         <Paper shadow="xs" withBorder p="xl">
           <Box
@@ -158,107 +167,120 @@ const MainForm = () => {
         </Paper>
       </Modal>
 
-      <Box
-        component="form"
-        onSubmit={form.onSubmit(handleSubmit)}
-        w={{ base: "100%", md: "70%" }}
-        h={"50%"}
-        my={20}
-        pos={{ lg: "sticky" }}
-        top={10}
-        left={0}
-        p={10}
-        style={{
-          backgroundColor: "rgba(25, 113, 194, 0.06)",
-          borderRadius: theme.radius.md,
-        }}
+      <Drawer
+        opened={openedDrawer}
+        onClose={closeDrawer}
+        title="Agregar entrada nueva"
+        offset={8}
+        radius="md"
+        size={"lg"}
       >
-        <Flex direction="column" gap={10}>
-          <TextInput
-            label="Título"
-            placeholder="Título"
-            key={form.key("title")}
-            {...form.getInputProps("title")}
-            mb={10}
-          />
+        <Box
+          component="form"
+          onSubmit={form.onSubmit(handleSubmit)}
+          w={"100%"}
+          h={"50%"}
+          my={20}
+          pos={{ lg: "sticky" }}
+          top={10}
+          left={0}
+          p={10}
+          style={{
+            backgroundColor: "rgba(25, 113, 194, 0.06)",
+            borderRadius: theme.radius.md,
+          }}
+        >
+          <Flex direction="column" gap={10}>
+            <TextInput
+              label="Título"
+              placeholder="Título"
+              key={form.key("title")}
+              {...form.getInputProps("title")}
+              mb={10}
+            />
 
-          <RichTextEditor editor={editor}>
-            <RichTextEditor.Toolbar>
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.Bold />
-                <RichTextEditor.Italic />
-                <RichTextEditor.Underline />
-                <RichTextEditor.Strikethrough />
-              </RichTextEditor.ControlsGroup>
+            <RichTextEditor editor={editor}>
+              <RichTextEditor.Toolbar>
+                <RichTextEditor.ControlsGroup>
+                  <RichTextEditor.Bold />
+                  <RichTextEditor.Italic />
+                  <RichTextEditor.Underline />
+                  <RichTextEditor.Strikethrough />
+                </RichTextEditor.ControlsGroup>
 
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.H1 />
-                <RichTextEditor.H2 />
-                <RichTextEditor.H3 />
-                <RichTextEditor.H4 />
-              </RichTextEditor.ControlsGroup>
+                <RichTextEditor.ControlsGroup>
+                  <RichTextEditor.H1 />
+                  <RichTextEditor.H2 />
+                  <RichTextEditor.H3 />
+                  <RichTextEditor.H4 />
+                </RichTextEditor.ControlsGroup>
 
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.BulletList />
-                <RichTextEditor.OrderedList />
-              </RichTextEditor.ControlsGroup>
-              <ClearControl
-                handleClear={() => {
-                  editor?.commands.setContent("");
-                  setFieldValue("description", "");
-                }}
-              />
-            </RichTextEditor.Toolbar>
+                <RichTextEditor.ControlsGroup>
+                  <RichTextEditor.BulletList />
+                  <RichTextEditor.OrderedList />
+                </RichTextEditor.ControlsGroup>
+                <ClearControl
+                  handleClear={() => {
+                    editor?.commands.setContent("");
+                    setFieldValue("description", "");
+                  }}
+                />
+              </RichTextEditor.Toolbar>
 
-            <RichTextEditor.Content />
-          </RichTextEditor>
+              <RichTextEditor.Content />
+            </RichTextEditor>
 
-          <Button
-            rightSection={<BsStars color={"yellow"} />}
-            disabled={description === ""}
-            type="button"
-            variant="gradient"
-            onClick={handleCorrections}
-            loading={isLoading}
-            loaderProps={{ type: "dots" }}
-            fullWidth
-          >
-            Mejorar registro
-          </Button>
-          {generatedText ? (
             <Button
-              fullWidth
-              disabled={!description}
+              rightSection={<BsStars color={"yellow"} />}
+              disabled={description === ""}
               type="button"
-              onClick={open}
+              variant="gradient"
+              onClick={handleCorrections}
+              loading={isLoading}
+              loaderProps={{ type: "dots" }}
+              fullWidth
             >
-              Abrir
+              Mejorar registro
             </Button>
-          ) : null}
+            {generatedText ? (
+              <Button
+                fullWidth
+                disabled={!description}
+                type="button"
+                onClick={open}
+              >
+                Abrir
+              </Button>
+            ) : null}
 
-          <Flex mt={10} gap={20} direction={"column"}>
-            <Checkbox
-              key={form.key("isCurrentDay")}
-              {...form.getInputProps("isCurrentDay", { type: "checkbox" })}
-              label={"Marcar como día actual"}
-            />
+            <Flex mt={10} gap={20} direction={"column"}>
+              <Checkbox
+                key={form.key("isCurrentDay")}
+                {...form.getInputProps("isCurrentDay", { type: "checkbox" })}
+                label={"Marcar como día actual"}
+              />
 
-            <DateTimePicker
-              disabled={isCurrentDay}
-              label="Fecha y hora específica"
-              placeholder="Fecha y hora"
-              rightSectionPointerEvents={"none"}
-              rightSection={<BiCalendar />}
-              key={form.key("date")}
-              {...form.getInputProps("date")}
-            />
+              <DateTimePicker
+                disabled={isCurrentDay}
+                label="Fecha y hora específica"
+                placeholder="Fecha y hora"
+                rightSectionPointerEvents={"none"}
+                rightSection={<BiCalendar />}
+                key={form.key("date")}
+                {...form.getInputProps("date")}
+              />
 
-            <Button fullWidth disabled={!form.isValid()} type="submit">
-              Guardar
-            </Button>
+              <Button fullWidth disabled={!form.isValid()} type="submit">
+                Guardar
+              </Button>
+            </Flex>
           </Flex>
-        </Flex>
-      </Box>
+        </Box>
+      </Drawer>
+
+      <Button variant="gradient" my={"xl"} size="lg" onClick={openDrawer}>
+        Agregar entrada
+      </Button>
     </>
   );
 };
