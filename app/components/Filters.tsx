@@ -56,7 +56,11 @@ const Filters = ({ handleFiltered }: Props) => {
         w={{ base: "100%", md: "auto" }}
       />
 
-      <Flex columnGap={10} w={{ base: "100%", md: "auto" }}>
+      <Flex
+        gap={10}
+        w={{ base: "100%", md: "auto" }}
+        direction={{ base: "column", md: "row" }}
+      >
         <Select
           label="Fecha de entrada"
           placeholder="Recientes o Antiguos"

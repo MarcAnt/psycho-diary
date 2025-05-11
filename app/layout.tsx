@@ -9,7 +9,6 @@ import {
 } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { EntryStoreProvider } from "@/providers/entries-store-provider";
-import Footer from "./components/Footer";
 // import { SessionProvider } from "next-auth/react";
 // import { auth } from "@/auth";
 
@@ -36,8 +35,6 @@ export default async function RootLayout({
             {/* <SessionProvider session={session}> */}
             <EntryStoreProvider>{children}</EntryStoreProvider>
             {/* </SessionProvider> */}
-
-            <Footer />
           </MantineProvider>
         </body>
       </html>
