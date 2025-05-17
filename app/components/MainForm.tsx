@@ -218,13 +218,13 @@ const MainForm = () => {
                 <RichTextEditor.ControlsGroup>
                   <RichTextEditor.BulletList />
                   <RichTextEditor.OrderedList />
+                  <ClearControl
+                    handleClear={() => {
+                      editor?.commands.setContent("");
+                      setFieldValue("description", "");
+                    }}
+                  />
                 </RichTextEditor.ControlsGroup>
-                <ClearControl
-                  handleClear={() => {
-                    editor?.commands.setContent("");
-                    setFieldValue("description", "");
-                  }}
-                />
               </RichTextEditor.Toolbar>
 
               <RichTextEditor.Content />

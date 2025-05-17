@@ -1,20 +1,18 @@
 import {
-  AppShell,
   AppShellFooter,
-  AppShellHeader,
   AppShellMain,
   Center,
   Flex,
   Title,
 } from "@mantine/core";
 import MainForm from "./components/MainForm";
-import Header from "./components/Header";
 import DiaryEntries from "./components/DiaryEntries";
 import { type Profile } from "./types";
 import { Suspense } from "react";
 import { auth } from "@/auth";
 import AppInitializer from "./components/AppInitializer";
 import Footer from "./components/Footer";
+import WrapperLayout from "./components/WrapperLayout";
 
 export default async function Home() {
   const session = await auth();
@@ -25,11 +23,11 @@ export default async function Home() {
   return (
     <Suspense>
       <AppInitializer>
-        <AppShell header={{ height: 70 }} footer={{ height: { base: 80 } }}>
-          <AppShellHeader p={"md"}>
-            <Header userType={profile} />
-          </AppShellHeader>
-
+        <WrapperLayout
+          header={{ height: 70 }}
+          footer={{ height: { base: 80 } }}
+          profile={profile}
+        >
           <AppShellMain>
             <Center>
               {profile === "patient" ? (
@@ -41,7 +39,7 @@ export default async function Home() {
                   justify={"center"}
                   w={"100%"}
                 >
-                  <Title order={3} my={"md"} ta="center">
+                  <Title order={3} my={"md"} px={{ base: "sm" }} ta="center">
                     ¡Hola! Bienvenido de nuevo. ¿Qué notas tienes para hoy?
                   </Title>
                   <MainForm />
@@ -56,7 +54,7 @@ export default async function Home() {
                   justify={"center"}
                   w={"100%"}
                 >
-                  <Title order={3} my={"md"} ta="center">
+                  <Title order={3} my={"md"} px={{ base: "sm" }} ta="center">
                     ¡Hola! Bienvenido de nuevo. Estas son las notas de tu
                     paciente.
                   </Title>
@@ -78,7 +76,7 @@ export default async function Home() {
           >
             <Footer />
           </AppShellFooter>
-        </AppShell>
+        </WrapperLayout>
       </AppInitializer>
     </Suspense>
   );

@@ -21,7 +21,7 @@ const EntriesPage = async () => {
           <Anchor component={Link} px={"sm"} href={"/"}>
             Inicio
           </Anchor>
-          <Title order={3} my={"md"} ta="center">
+          <Title order={3} my={"md"} px={{ base: "sm" }} ta="center">
             ¡Hola! Bienvenido de nuevo. Estas son las notas.
           </Title>
           <DiaryEntries profile={profile} />

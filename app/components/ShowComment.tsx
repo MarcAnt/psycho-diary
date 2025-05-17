@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Divider, Flex, Stack, Text } from "@mantine/core";
+import { Box, Divider, Stack, Text } from "@mantine/core";
 import { type Comment } from "../types";
 import dayjs from "dayjs";
 
@@ -12,14 +12,11 @@ const ShowComment = ({ comment, created_at }: Props) => {
 
   return (
     <Stack>
-      <Flex justify={"space-between"} align={"center"}>
-        <Text>Comentario:</Text>
-        <Text c="dimmed" fs={"italic"} size="sm" component="span">
-          {dayjs(created_at).format("DD/MM/YYYY HH:mm")}
-        </Text>
-      </Flex>
-      <Divider my="sm" />
+      <Divider my="xs" />
       <Box m={0} p={0} dangerouslySetInnerHTML={{ __html: comment }} />
+      <Text c="dimmed" fs={"italic"} size="sm" component="span">
+        {dayjs(created_at).format("DD/MM/YYYY HH:mm")}
+      </Text>
     </Stack>
   );
 };

@@ -51,13 +51,13 @@ export const ShowEditor = ({ onChange, value }: RichTextEditorProps) => {
           <RichTextEditor.ControlsGroup>
             <RichTextEditor.BulletList />
             <RichTextEditor.OrderedList />
+            <ClearControl
+              handleClear={() => {
+                editor?.commands.setContent("");
+                onChange("");
+              }}
+            />
           </RichTextEditor.ControlsGroup>
-          <ClearControl
-            handleClear={() => {
-              editor?.commands.setContent("");
-              onChange("");
-            }}
-          />
         </RichTextEditor.Toolbar>
 
         <RichTextEditor.Content />

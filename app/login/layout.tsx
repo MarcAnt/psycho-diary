@@ -1,12 +1,6 @@
-import {
-  AppShell,
-  AppShellFooter,
-  AppShellHeader,
-  AppShellMain,
-  Center,
-} from "@mantine/core";
-import Header from "../components/Header";
+import { AppShellFooter, AppShellMain, Center } from "@mantine/core";
 import Footer from "../components/Footer";
+import WrapperLayout from "../components/WrapperLayout";
 
 export default function LoginLayout({
   children,
@@ -15,11 +9,11 @@ export default function LoginLayout({
 }) {
   return (
     <>
-      <AppShell header={{ height: 70 }} footer={{ height: { base: 80 } }}>
-        <AppShellHeader p={"md"}>
-          <Header userType={null} />
-        </AppShellHeader>
-
+      <WrapperLayout
+        header={{ height: 70 }}
+        footer={{ height: { base: 80 } }}
+        profile={null}
+      >
         <AppShellMain>
           <Center>{children}</Center>
         </AppShellMain>
@@ -36,7 +30,7 @@ export default function LoginLayout({
         >
           <Footer />
         </AppShellFooter>
-      </AppShell>
+      </WrapperLayout>
     </>
   );
 }

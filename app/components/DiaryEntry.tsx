@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   Flex,
+  Group,
   Modal,
   Paper,
   Spoiler,
@@ -80,9 +81,12 @@ const DiaryEntry = ({
         onClose={close}
         title={
           comments?.length ? (
-            <TextNode>Agregar comentario - {title}</TextNode>
+            <TextNode>Comentario de: {title}</TextNode>
           ) : (
-            <TextNode>Comentario - {title}</TextNode>
+            <Group>
+              <TextNode>Agregar comentario a: </TextNode>{" "}
+              <TextNode fs="italic">{title}</TextNode>
+            </Group>
           )
         }
         radius={"md"}
@@ -195,14 +199,14 @@ const DiaryEntry = ({
           </Stack>
         </Spoiler>
         {profile === "psychologist" ? (
-          <Flex mt={20} justify={"space-between"} align={"center"}>
+          <Flex wrap={"wrap"} justify={"flex-end"} align={"center"}>
             {comments?.length ? (
               <>
-                <Button disabled={!!comments[0].comment} onClick={open}>
-                  Comentar
-                </Button>
+                {!comments[0].comment?.length ? (
+                  <Button onClick={open}>Comentar</Button>
+                ) : null}
 
-                <Flex align={"center"} columnGap={10}>
+                <Flex mt={20} align={"center"} gap={10}>
                   <ActionIcon
                     variant="filled"
                     size={"sm"}
