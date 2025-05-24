@@ -21,7 +21,6 @@ import { Link, RichTextEditor } from "@mantine/tiptap";
 import TextAlign from "@tiptap/extension-text";
 import { useEntryStore } from "@/providers/entries-store-provider";
 import { BiCalendar } from "react-icons/bi";
-import { createClient } from "../utils/supabase/client";
 import { BsStars } from "react-icons/bs";
 import { useDisclosure } from "@mantine/hooks";
 import ClearControl from "./Editor/ClearControl";
@@ -91,21 +90,6 @@ const MainForm = () => {
     if (!values.title || !values.description) {
       return;
     }
-
-    const supabase = createClient();
-    const { error } = await supabase.from("entry").insert([
-      {
-        title: values.title,
-        description: values.description,
-        date: values.date,
-      },
-    ]);
-
-    if (error) {
-      console.error("Error inserting data:", error);
-      return;
-    }
-
     addEntry({
       date: !isCurrentDay ? values.date : new Date(),
       description: values.description,

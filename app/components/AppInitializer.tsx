@@ -7,9 +7,9 @@ import useSWR from "swr";
 async function fetchEntries() {
   const supabase = createClient();
   const { data, error } = await supabase
-    .from("entry")
+    .from("entries")
     .select(
-      "id, title, description, date, created_at,comments(comment, created_at, id)"
+      "id, title, description, date, created_at, comments(comment, created_at, id)"
     );
   if (error) throw error;
   return data;

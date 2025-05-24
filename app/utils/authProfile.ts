@@ -7,5 +7,5 @@ export const authProfile = async () => {
   const profile: Profile =
     userType === "psychologist" ? "psychologist" : "patient";
 
-  return { profile };
+  return { profile, session };
 };

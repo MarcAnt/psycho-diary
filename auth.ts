@@ -52,7 +52,7 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
           .select()
           .eq("profile", profile);
         if (error) {
-          console.error("Error al eliminar tarea:", error);
+          console.error("Error:", error);
           return null;
         }
 
@@ -62,7 +62,6 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
         );
 
         if (!passwordsMatch) {
-          // throw new CredentialsSignin("Contraseña incorrecta");
           throw new InvalidLoginError("Contraseña incorrecta");
         }
 

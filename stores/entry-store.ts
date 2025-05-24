@@ -44,7 +44,7 @@ export const createEntryStore = (initState: EntryState = defaultInitState) => {
         ...initState,
         getEntries: async () => {
           const { data, error } = await supabase
-            .from("entry")
+            .from("entries")
             .select(
               "id, title, description, date, created_at, comments(comment, created_at, id)"
             );
@@ -60,7 +60,20 @@ export const createEntryStore = (initState: EntryState = defaultInitState) => {
         setDateEntries: (entries) => {
           return set({ entries });
         },
-        addEntry: (entry) =>
+        addEntry: async (entry) => {
+          const { error } = await supabase.from("entries").insert([
+            {
+              title: entry.title,
+              description: entry.description,
+              date: entry.date,
+            },
+          ]);
+
+          if (error) {
+            console.error("Error inserting data:", error);
+            return;
+          }
+
           set((state) => {
             notifications.show({
               title: "Nueva entrada",
@@ -89,9 +102,14 @@ export const createEntryStore = (initState: EntryState = defaultInitState) => {
                 { ...entry, id: uuid(), comments: [] },
               ],
             };
-          }),
+          });
+        },
+
         deleteEntry: async (id) => {
-          const { error } = await supabase.from("entry").delete().eq("id", id);
+          const { error } = await supabase
+            .from("entries")
+            .delete()
+            .eq("id", id);
           if (error) {
             console.error("Error al eliminar tarea:", error);
             return;
@@ -192,7 +210,7 @@ export const createEntryStore = (initState: EntryState = defaultInitState) => {
           }
 
           const { data } = await supabase
-            .from("entry")
+            .from("entries")
             .select(
               "id, title, description, date, created_at, comments(comment, created_at, id)"
             );
@@ -238,7 +256,7 @@ export const createEntryStore = (initState: EntryState = defaultInitState) => {
           ]);
 
           const { data } = await supabase
-            .from("entry")
+            .from("entries")
             .select(
               "id, title, description, date, created_at, comments(comment, created_at, id)"
             );
@@ -277,7 +295,7 @@ export const createEntryStore = (initState: EntryState = defaultInitState) => {
           });
         },
       }),
-      { name: "entry-storage", skipHydration: true }
+      { name: "entries-storage", skipHydration: true }
     )
   );
 };
