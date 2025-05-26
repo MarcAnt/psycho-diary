@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import DiaryEntry from "./DiaryEntry";
 import {
   Anchor,
-  Divider,
   Flex,
   Group,
   Pagination,
@@ -73,9 +72,17 @@ const DiaryEntries = ({ profile }: Props) => {
         profile={profile}
       />
 
-      <Divider my="md" />
-
-      {data.length ? (
+      {loading ? (
+        <Flex
+          direction={"column"}
+          w={"100%"}
+          px={"sm"}
+          my={20}
+          align={"center"}
+        >
+          <Skeleton height={100} radius={10} />
+        </Flex>
+      ) : data.length ? (
         <>
           {isEntriesPage ? (
             <Group justify="flex-end">
@@ -88,41 +95,28 @@ const DiaryEntries = ({ profile }: Props) => {
               />
             </Group>
           ) : null}
-
-          {loading ? (
-            <Flex
-              direction={"column"}
-              w={"100%"}
-              px={"sm"}
-              my={20}
-              align={"center"}
-            >
-              <Skeleton height={100} radius={10} />
-            </Flex>
-          ) : (
-            <Timeline
-              w={"100%"}
-              active={-1}
-              bulletSize={24}
-              mt={20}
-              lineWidth={2}
-            >
-              {handleShowEntries().map((entry) => {
-                return (
-                  <Timeline.Item
-                    key={entry.id}
-                    title={
-                      <Flex align={"center"}>
-                        <ShowDate date={entry.date} />
-                      </Flex>
-                    }
-                  >
-                    <DiaryEntry profile={profile} {...entry} />
-                  </Timeline.Item>
-                );
-              })}
-            </Timeline>
-          )}
+          <Timeline
+            w={"100%"}
+            active={-1}
+            bulletSize={24}
+            mt={20}
+            lineWidth={2}
+          >
+            {handleShowEntries().map((entry) => {
+              return (
+                <Timeline.Item
+                  key={entry.id}
+                  title={
+                    <Flex align={"center"}>
+                      <ShowDate date={entry.date} />
+                    </Flex>
+                  }
+                >
+                  <DiaryEntry profile={profile} {...entry} />
+                </Timeline.Item>
+              );
+            })}
+          </Timeline>
         </>
       ) : (
         <Flex

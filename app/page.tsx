@@ -22,62 +22,64 @@ export default async function Home() {
 
   return (
     <Suspense>
-      <AppInitializer>
-        <WrapperLayout
-          header={{ height: 70 }}
-          footer={{ height: { base: 80 } }}
-          profile={profile}
-        >
-          <AppShellMain>
-            <Center>
-              {profile === "patient" ? (
-                <Flex
-                  my={"sm"}
-                  pos={"relative"}
-                  direction={"column"}
-                  align={"center"}
-                  justify={"center"}
-                  w={"100%"}
-                >
-                  <Title order={3} my={"md"} px={{ base: "sm" }} ta="center">
-                    ¡Hola! Bienvenido de nuevo. ¿Qué notas tienes para hoy?
-                  </Title>
-                  <MainForm />
+      <WrapperLayout
+        header={{ height: 70 }}
+        footer={{ height: { base: 80 } }}
+        profile={profile}
+      >
+        <AppShellMain>
+          <Center>
+            {profile === "patient" ? (
+              <Flex
+                my={"sm"}
+                pos={"relative"}
+                direction={"column"}
+                align={"center"}
+                justify={"center"}
+                w={"100%"}
+              >
+                <Title order={3} my={"md"} px={{ base: "sm" }} ta="center">
+                  ¡Hola! Bienvenido de nuevo. ¿Qué notas tienes para hoy?
+                </Title>
+                <MainForm />
+                <AppInitializer>
                   <DiaryEntries profile={profile} />
-                </Flex>
-              ) : (
-                <Flex
-                  my={"sm"}
-                  pos={"relative"}
-                  direction={"column"}
-                  align={"center"}
-                  justify={"center"}
-                  w={"100%"}
-                >
-                  <Title order={3} my={"md"} px={{ base: "sm" }} ta="center">
-                    ¡Hola! Bienvenido de nuevo. Estas son las notas de tu
-                    paciente.
-                  </Title>
+                </AppInitializer>
+              </Flex>
+            ) : (
+              <Flex
+                my={"sm"}
+                pos={"relative"}
+                direction={"column"}
+                align={"center"}
+                justify={"center"}
+                w={"100%"}
+              >
+                <Title order={3} my={"md"} px={{ base: "sm" }} ta="center">
+                  ¡Hola! Bienvenido de nuevo. Estas son las notas de tu
+                  paciente.
+                </Title>
+                <AppInitializer>
                   <DiaryEntries profile={profile} />
-                </Flex>
-              )}
-            </Center>
-          </AppShellMain>
+                </AppInitializer>
+              </Flex>
+            )}
+          </Center>
+        </AppShellMain>
 
-          <AppShellFooter
-            p={"md"}
-            styles={{
-              footer: {
-                display: "flex",
-                justifyContent: "center",
-              },
-            }}
-            withBorder={false}
-          >
-            <Footer />
-          </AppShellFooter>
-        </WrapperLayout>
-      </AppInitializer>
+        <AppShellFooter
+          p={"md"}
+          styles={{
+            footer: {
+              display: "flex",
+              justifyContent: "center",
+            },
+          }}
+          withBorder={false}
+        >
+          <Footer />
+        </AppShellFooter>
+      </WrapperLayout>
     </Suspense>
   );
 }

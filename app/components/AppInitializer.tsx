@@ -12,6 +12,7 @@ async function fetchEntries() {
       "id, title, description, date, created_at, comments(comment, created_at, id)"
     );
   if (error) throw error;
+
   return data;
 }
 
@@ -20,8 +21,14 @@ export default function AppInitializer({ children }: { children: ReactNode }) {
   const { setDateEntries, setLoading } = useEntryStore((state) => state);
 
   useEffect(() => {
-    setDateEntries(data || []);
-    setLoading(isLoading);
+    if (isLoading) {
+      setLoading(isLoading);
+    }
+
+    if (data?.length) {
+      setDateEntries(data || []);
+      setLoading(false);
+    }
   }, [data, setDateEntries, setLoading, isLoading]);
 
   return children;

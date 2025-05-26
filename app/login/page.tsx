@@ -5,9 +5,9 @@ import { authProfile } from "../utils/authProfile";
 import { redirect } from "next/navigation";
 
 const LoginPage = async () => {
-  const { profile } = await authProfile();
+  const { session } = await authProfile();
 
-  if (profile) {
+  if (session?.user.name) {
     redirect("/");
   }
 

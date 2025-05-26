@@ -48,7 +48,7 @@ const Filters = ({ handleFiltered }: Props) => {
 
   return (
     <>
-      <Group justify="center" mt={5} mb={3}>
+      <Group justify="center" my={"lg"}>
         <Button onClick={toggle} rightSection={<CgOptions size={14} />}>
           {opened ? "Ocultar" : "Mostrar"} filtros
         </Button>
@@ -59,7 +59,7 @@ const Filters = ({ handleFiltered }: Props) => {
           w={"100%"}
           justify={"space-between"}
           align={"center"}
-          mb={"sm"}
+          my={"xl"}
           direction={{ base: "column", md: "row" }}
           gap={10}
         >

@@ -1,4 +1,3 @@
-"use client";
 import { Entry } from "@/app/types";
 import { createClient } from "@/app/utils/supabase/client";
 import { notifications } from "@mantine/notifications";
@@ -6,6 +5,7 @@ import dayjs from "dayjs";
 import { v4 as uuid } from "uuid";
 import { createStore } from "zustand";
 import { persist } from "zustand/middleware";
+import CryptoJS from "crypto-js";
 
 export type EntryActions = {
   addEntry: (entry: Omit<Entry, "id" | "comments">) => void;
@@ -28,14 +28,18 @@ export type EntryStore = EntryState & EntryActions;
 
 export const defaultInitState: EntryState = {
   entries: [],
-  loading: false,
+  loading: true,
 };
 
 export const initEntryStore = (): EntryState => {
-  return { entries: [], loading: false };
+  return { entries: [], loading: true };
 };
 
 const supabase = createClient();
+
+const key = process.env.NEXT_PUBLIC_SECRET_KEY;
+const keyutf = CryptoJS.enc.Utf8.parse(key);
+const iv = CryptoJS.enc.Base64.parse(key);
 
 export const createEntryStore = (initState: EntryState = defaultInitState) => {
   return createStore<EntryStore>()(
@@ -58,16 +62,63 @@ export const createEntryStore = (initState: EntryState = defaultInitState) => {
           }
         },
         setDateEntries: (entries) => {
-          return set({ entries });
+          const decryptedEntries = entries.map((entry) => {
+            let decryptedTitle = "";
+            let decryptedComment = "";
+
+            if (entry.title) {
+              decryptedTitle = CryptoJS.AES.decrypt(entry.title, keyutf, {
+                iv: iv,
+              }).toString(CryptoJS.enc.Utf8);
+            }
+            const decryptedDescription = CryptoJS.AES.decrypt(
+              entry.description,
+              keyutf,
+              { iv: iv }
+            ).toString(CryptoJS.enc.Utf8);
+
+            if (entry.comments.length) {
+              decryptedComment = CryptoJS.AES.decrypt(
+                entry.comments[0].comment!,
+                keyutf,
+                { iv: iv }
+              ).toString(CryptoJS.enc.Utf8);
+            }
+
+            return {
+              ...entry,
+              title: decryptedTitle,
+              description: decryptedDescription,
+              comments: decryptedComment
+                ? [{ ...entry.comments[0], comment: decryptedComment }]
+                : [],
+            };
+          });
+
+          return set({ entries: decryptedEntries });
         },
         addEntry: async (entry) => {
-          const { error } = await supabase.from("entries").insert([
-            {
-              title: entry.title,
-              description: entry.description,
-              date: entry.date,
-            },
-          ]);
+          let encryptedTitle = "";
+
+          if (entry.title) {
+            encryptedTitle = CryptoJS.AES.encrypt(entry.title, keyutf, {
+              iv: iv,
+            }).toString();
+          }
+
+          const encryptedDescription = CryptoJS.AES.encrypt(
+            entry.description,
+            keyutf,
+            { iv: iv }
+          ).toString();
+
+          const newEntry = {
+            title: encryptedTitle,
+            description: encryptedDescription,
+            date: entry.date,
+          };
+
+          const { error } = await supabase.from("entries").insert([newEntry]);
 
           if (error) {
             console.error("Error inserting data:", error);
@@ -104,7 +155,6 @@ export const createEntryStore = (initState: EntryState = defaultInitState) => {
             };
           });
         },
-
         deleteEntry: async (id) => {
           const { error } = await supabase
             .from("entries")
@@ -248,9 +298,14 @@ export const createEntryStore = (initState: EntryState = defaultInitState) => {
           if (!comment) {
             return;
           }
+
+          const encryptedComment = CryptoJS.AES.encrypt(comment, keyutf, {
+            iv: iv,
+          }).toString();
+
           const { error, status } = await supabase.from("comments").insert([
             {
-              comment,
+              comment: encryptedComment,
               entry_id: entryId,
             },
           ]);
@@ -295,7 +350,31 @@ export const createEntryStore = (initState: EntryState = defaultInitState) => {
           });
         },
       }),
-      { name: "entries-storage", skipHydration: true }
+      {
+        name: "entries-storage",
+        skipHydration: true,
+        storage: {
+          getItem: (name) => {
+            const encrypted = localStorage.getItem(name);
+            return encrypted
+              ? JSON.parse(
+                  CryptoJS.AES.decrypt(encrypted, keyutf, { iv: iv }).toString(
+                    CryptoJS.enc.Utf8
+                  )
+                )
+              : null;
+          },
+          setItem: (name, value) => {
+            const encrypted = CryptoJS.AES.encrypt(
+              JSON.stringify(value),
+              keyutf,
+              { iv: iv }
+            ).toString();
+            localStorage.setItem(name, encrypted);
+          },
+          removeItem: (name) => localStorage.removeItem(name),
+        },
+      }
     )
   );
 };

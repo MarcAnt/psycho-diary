@@ -71,6 +71,9 @@ const DiaryEntry = ({
   }
 
   const handleCreateComment = async () => {
+    if (!comment) {
+      return;
+    }
     addComment(comment, id);
   };
 

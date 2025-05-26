@@ -10,23 +10,23 @@ const EntriesPage = async () => {
 
   return (
     <Suspense>
-      <AppInitializer>
-        <Flex
-          my={"sm"}
-          direction={"column"}
-          align={"center"}
-          justify={"center"}
-          w={"100%"}
-        >
-          <Anchor component={Link} px={"sm"} href={"/"}>
-            Inicio
-          </Anchor>
-          <Title order={3} my={"md"} px={{ base: "sm" }} ta="center">
-            ¡Hola! Bienvenido de nuevo. Estas son las notas.
-          </Title>
+      <Flex
+        my={"sm"}
+        direction={"column"}
+        align={"center"}
+        justify={"center"}
+        w={"100%"}
+      >
+        <Anchor component={Link} px={"sm"} href={"/"}>
+          Inicio
+        </Anchor>
+        <Title order={3} my={"md"} px={{ base: "sm" }} ta="center">
+          ¡Hola! Bienvenido de nuevo. Estas son las notas.
+        </Title>
+        <AppInitializer>
           <DiaryEntries profile={profile} />
-        </Flex>
-      </AppInitializer>
+        </AppInitializer>
+      </Flex>
     </Suspense>
   );
 };
