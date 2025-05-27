@@ -5,7 +5,7 @@ import { notifications } from "@mantine/notifications";
 import dayjs from "dayjs";
 import { v4 as uuid } from "uuid";
 import { createStore } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 export type EntryActions = {
   addEntry: (entry: Omit<Entry, "id" | "comments">) => void;
@@ -295,7 +295,11 @@ export const createEntryStore = (initState: EntryState = defaultInitState) => {
           });
         },
       }),
-      { name: "entries-storage", skipHydration: true }
+      {
+        name: "entries-storage",
+        skipHydration: true,
+        storage: createJSONStorage(() => sessionStorage),
+      }
     )
   );
 };
