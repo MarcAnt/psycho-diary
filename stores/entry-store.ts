@@ -388,11 +388,11 @@ import dayjs from "dayjs";
 import { v4 as uuid } from "uuid";
 import { createStore } from "zustand";
 import { persist } from "zustand/middleware";
-import CryptoJS from "crypto-js";
+// import CryptoJS from "crypto-js";
 
-const key = process.env.NEXT_PUBLIC_SECRET_KEY;
-const keyutf = CryptoJS.enc.Utf8.parse(key);
-const iv = CryptoJS.enc.Base64.parse(key);
+// const key = process.env.NEXT_PUBLIC_SECRET_KEY;
+// const keyutf = CryptoJS.enc.Utf8.parse(key);
+// const iv = CryptoJS.enc.Base64.parse(key);
 
 export type EntryActions = {
   addEntry: (entry: Omit<Entry, "id" | "comments">) => void;
@@ -684,27 +684,27 @@ export const createEntryStore = (initState: EntryState = defaultInitState) => {
       {
         name: "entries-storage",
         skipHydration: true,
-        storage: {
-          getItem: (name) => {
-            const encrypted = sessionStorage.getItem(name);
-            return encrypted
-              ? JSON.parse(
-                  CryptoJS.AES.decrypt(encrypted, keyutf, { iv: iv }).toString(
-                    CryptoJS.enc.Utf8
-                  )
-                )
-              : null;
-          },
-          setItem: (name, value) => {
-            const encrypted = CryptoJS.AES.encrypt(
-              JSON.stringify(value),
-              keyutf,
-              { iv: iv }
-            ).toString();
-            sessionStorage.setItem(name, encrypted);
-          },
-          removeItem: (name) => sessionStorage.removeItem(name),
-        },
+        // storage: {
+        //   getItem: (name) => {
+        //     const encrypted = sessionStorage.getItem(name);
+        //     return encrypted
+        //       ? JSON.parse(
+        //           CryptoJS.AES.decrypt(encrypted, keyutf, { iv: iv }).toString(
+        //             CryptoJS.enc.Utf8
+        //           )
+        //         )
+        //       : null;
+        //   },
+        //   setItem: (name, value) => {
+        //     const encrypted = CryptoJS.AES.encrypt(
+        //       JSON.stringify(value),
+        //       keyutf,
+        //       { iv: iv }
+        //     ).toString();
+        //     sessionStorage.setItem(name, encrypted);
+        //   },
+        //   removeItem: (name) => sessionStorage.removeItem(name),
+        // },
       }
     )
   );
