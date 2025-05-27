@@ -380,7 +380,7 @@
 //   );
 // };
 
-"use client";
+import { encryptedStorage } from "@/app/helpers";
 import { Entry } from "@/app/types";
 import { createClient } from "@/app/utils/supabase/client";
 import { notifications } from "@mantine/notifications";
@@ -705,6 +705,11 @@ export const createEntryStore = (initState: EntryState = defaultInitState) => {
         //   },
         //   removeItem: (name) => sessionStorage.removeItem(name),
         // },
+        storage: {
+          getItem: encryptedStorage.getItem,
+          setItem: encryptedStorage.setItem,
+          removeItem: encryptedStorage.removeItem,
+        },
       }
     )
   );
