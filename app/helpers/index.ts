@@ -25,13 +25,15 @@ import CryptoJS from "crypto-js";
 // };
 
 const CRYPTO_KEY = process.env.NEXT_PUBLIC_SECRET_KEY; // Use an environment variable in production!
+const SECRET_KEY = CryptoJS.enc.Utf8.parse(CRYPTO_KEY);
+const iv = CryptoJS.enc.Base64.parse(CRYPTO_KEY);
 
 export const secureStorage = {
   getItem: (name: string): string | null => {
     const data = sessionStorage.getItem(name);
     if (!data) return null;
     try {
-      const decrypted = CryptoJS.AES.decrypt(data, CRYPTO_KEY).toString(
+      const decrypted = CryptoJS.AES.decrypt(data, SECRET_KEY, { iv }).toString(
         CryptoJS.enc.Utf8
       );
       return decrypted || null;
@@ -40,7 +42,9 @@ export const secureStorage = {
     }
   },
   setItem: (name: string, value: string): void => {
-    const encrypted = CryptoJS.AES.encrypt(value, CRYPTO_KEY).toString();
+    const encrypted = CryptoJS.AES.encrypt(value, SECRET_KEY, {
+      iv,
+    }).toString();
     sessionStorage.setItem(name, encrypted);
   },
   removeItem: (name: string): void => {
