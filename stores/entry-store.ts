@@ -380,14 +380,14 @@
 //   );
 // };
 
-import { encryptedStorage } from "@/app/helpers";
+import { secureStorage } from "@/app/helpers";
 import { Entry } from "@/app/types";
 import { createClient } from "@/app/utils/supabase/client";
 import { notifications } from "@mantine/notifications";
 import dayjs from "dayjs";
 import { v4 as uuid } from "uuid";
 import { createStore } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 // import CryptoJS from "crypto-js";
 
 // const key = process.env.NEXT_PUBLIC_SECRET_KEY;
@@ -705,11 +705,7 @@ export const createEntryStore = (initState: EntryState = defaultInitState) => {
         //   },
         //   removeItem: (name) => sessionStorage.removeItem(name),
         // },
-        storage: {
-          getItem: encryptedStorage.getItem,
-          setItem: encryptedStorage.setItem,
-          removeItem: encryptedStorage.removeItem,
-        },
+        storage: createJSONStorage(() => secureStorage),
       }
     )
   );
