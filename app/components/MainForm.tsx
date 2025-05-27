@@ -24,11 +24,16 @@ import { BiCalendar } from "react-icons/bi";
 import { BsStars } from "react-icons/bs";
 import { useDisclosure } from "@mantine/hooks";
 import ClearControl from "./Editor/ClearControl";
+import CryptoJS from "crypto-js";
 
 type FormInputs = Omit<Entry, "id" | "comments"> & {
   isCurrentDay: boolean;
   isSubmitted: boolean;
 };
+
+const key = process.env.NEXT_PUBLIC_SECRET_KEY;
+const keyutf = CryptoJS.enc.Utf8.parse(key);
+const iv = CryptoJS.enc.Base64.parse(key);
 
 const MainForm = () => {
   const { addEntry } = useEntryStore((state) => state);
@@ -90,10 +95,21 @@ const MainForm = () => {
     if (!values.title || !values.description) {
       return;
     }
+
+    const { title, description } = values;
+
+    const encryptedTitle = CryptoJS.AES.encrypt(title, keyutf, {
+      iv: iv,
+    }).toString();
+
+    const encryptedDescription = CryptoJS.AES.encrypt(description, keyutf, {
+      iv: iv,
+    }).toString();
+
     addEntry({
       date: !isCurrentDay ? values.date : new Date(),
-      description: values.description,
-      title: values.title,
+      description: encryptedDescription,
+      title: encryptedTitle,
     });
     setFieldValue("description", "");
     setGeneratedText("");

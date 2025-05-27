@@ -31,8 +31,13 @@ import { MdOutlineComment } from "react-icons/md";
 import { useDisclosure } from "@mantine/hooks";
 import ShowComment from "./ShowComment";
 import ShowEditor from "./Editor/ShowEditor";
+import CryptoJS from "crypto-js";
 
 type EntryProps = Entry & { profile: Profile };
+
+const key = process.env.NEXT_PUBLIC_SECRET_KEY;
+const keyutf = CryptoJS.enc.Utf8.parse(key);
+const iv = CryptoJS.enc.Base64.parse(key);
 
 const ShowTitle = ({ children }: { children: ReactNode }) => {
   return children ? (
@@ -74,7 +79,12 @@ const DiaryEntry = ({
     if (!comment) {
       return;
     }
-    addComment(comment, id);
+
+    const encryptedComment = CryptoJS.AES.encrypt(comment, keyutf, {
+      iv: iv,
+    }).toString();
+
+    addComment(encryptedComment, id);
   };
 
   return (
